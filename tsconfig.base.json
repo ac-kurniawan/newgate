@@ -14,7 +14,13 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@newgate/crypto": ["libs/crypto/src/index.ts"],
+      "@newgate/error-apps": ["libs/error-apps/src/index.ts"],
+      "@newgate/generator": ["libs/generator/src/index.ts"],
+      "@newgate/mock-model": ["libs/mock-model/src/index.ts"],
+      "@newgate/model": ["libs/model/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
