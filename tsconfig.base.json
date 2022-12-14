@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@newgate/crypto": ["libs/crypto/src/index.ts"],
+      "@newgate/dto": ["libs/dto/src/index.ts"],
       "@newgate/error-apps": ["libs/error-apps/src/index.ts"],
       "@newgate/generator": ["libs/generator/src/index.ts"],
       "@newgate/logger": ["libs/logger/src/index.ts"],

@@ -1,10 +1,10 @@
 import { AccountModel } from '@newgate/model';
 import { DataSource, Repository } from 'typeorm';
-import { AccountEntity } from '../account.entity';
+import { AccountEntity, accountEntityConverter } from '../account.entity';
 import { AccountRepository } from '../account.repository';
 
 export class AccountRepositorySQLImpl implements AccountRepository {
-  repo: Repository<AccountEntity>;
+  private repo: Repository<AccountEntity>;
   constructor(private readonly datasource: DataSource) {
     this.repo = this.datasource.getRepository(AccountEntity);
   }
@@ -16,10 +16,10 @@ export class AccountRepositorySQLImpl implements AccountRepository {
       email,
       password,
     });
-    return result.toModel();
+    return accountEntityConverter.toModel(result);
   }
   async createAccount(account: AccountModel): Promise<AccountModel> {
     const result = await this.repo.save(account);
-    return result.toModel();
+    return accountEntityConverter.toModel(result);
   }
 }

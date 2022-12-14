@@ -1,10 +1,10 @@
-export type KongKeyAuthModel = {
+export type Kong = {
+  id?: string;
+  accountId: string;
   loopbackApiUrl: string;
   key: string;
   name: string;
-};
-
-export type Kong = {
-  id?: string;
-  keyauth?: KongKeyAuthModel;
+  alias?: string;
+  group?: string;
+  tags?: string;
 };

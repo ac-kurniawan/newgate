@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -13,6 +14,7 @@ export class AccountEntity {
   id?: string;
 
   @Column()
+  @Index({ unique: true })
   email: string;
 
   @Column()
@@ -21,16 +23,10 @@ export class AccountEntity {
   @Column()
   password?: string;
 
-  @Column({
-    type: 'enum',
-    enum: ['ADMIN', 'DEVELOPER'],
-  })
+  @Column()
   type: AccountType;
 
-  @Column({
-    type: 'enum',
-    enum: ['ACTIVE', 'INACTIVE'],
-  })
+  @Column()
   status: AccountStatus;
 
   @Column()
@@ -41,18 +37,20 @@ export class AccountEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  toModel(): AccountModel {
-    return {
-      id: this.id,
-      email: this.email,
-      password: this.password,
-      fullName: this.fullName,
-      type: this.type,
-      status: this.status,
-      scopes: this.scopes,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-    };
-  }
 }
+
+export const accountEntityConverter = {
+  toModel: (entity: AccountEntity): AccountModel => {
+    return {
+      id: entity.id,
+      email: entity.email,
+      password: entity.password,
+      fullName: entity.fullName,
+      type: entity.type,
+      status: entity.status,
+      scopes: entity.scopes,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    };
+  },
+};

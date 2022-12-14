@@ -7,10 +7,16 @@ import 'reflect-metadata';
 import * as express from 'express';
 import * as path from 'path';
 import { config } from './environments/config';
+import bodyParser = require('body-parser');
+import { accountApplication } from './app/account/account.application';
 
 const app = express();
 
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+app.use(bodyParser.json());
+
+accountApplication(app);
 
 app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to api!' });

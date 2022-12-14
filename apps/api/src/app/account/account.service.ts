@@ -3,6 +3,8 @@ import { logger } from '@newgate/logger';
 import { errorAccountNotFound, errorCreateAccount } from './account.errors';
 import { AccountRepository } from './account.repository';
 import { AccountUtils } from './account.utils';
+import { AccountRepositorySQLImpl } from './impl/account.repository.sql.impl';
+import { accountDatasource } from './account.datasource';
 
 export class AccountService {
   constructor(
@@ -23,7 +25,7 @@ export class AccountService {
       throw new Error(errorCreateAccount.code);
     }
   }
-  async login(email: string, password: string): Promise<AccountModel> {
+  async preSignin(email: string, password: string): Promise<AccountModel> {
     const hashPassword = this.accountUtils.crypto.encrypt(password);
     try {
       const result = await this.accountRepository.getAccountByEmailAndPassword(
@@ -39,7 +41,16 @@ export class AccountService {
       throw new Error(errorAccountNotFound.code);
     }
   }
+  async signin(email: string, password: string): Promise<string> {
+    const result = await this.preSignin(email, password);
+    return this.accountUtils.generateJwt(result.id);
+  }
   async signup(account: AccountModel): Promise<AccountModel> {
     return await this.createAccount(account);
   }
 }
+
+export const accountService = () => {
+  const accountRepository = new AccountRepositorySQLImpl(accountDatasource);
+  return new AccountService(accountRepository, new AccountUtils());
+};

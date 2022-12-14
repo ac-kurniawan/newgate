@@ -11,5 +11,5 @@ export type AccountModel = {
   status: AccountStatus;
   scopes: string;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
 };
