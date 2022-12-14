@@ -1,5 +1,6 @@
 import { AccountModel } from '@newgate/model';
-import { errorAccountNotFound } from './account.errors';
+import { logger } from '@newgate/logger';
+import { errorAccountNotFound, errorCreateAccount } from './account.errors';
 import { AccountRepository } from './account.repository';
 import { AccountUtils } from './account.utils';
 
@@ -11,8 +12,16 @@ export class AccountService {
   async createAccount(account: AccountModel): Promise<AccountModel> {
     const password = account.password || 'changeme';
     account.password = this.accountUtils.crypto.encrypt(password);
-
-    return await this.accountRepository.createAccount(account);
+    try {
+      const result = await this.accountRepository.createAccount(account);
+      return result;
+    } catch (error: unknown) {
+      logger.log({
+        level: 'error',
+        message: (error as Error).message,
+      });
+      throw new Error(errorCreateAccount.code);
+    }
   }
   async login(email: string, password: string): Promise<AccountModel> {
     const hashPassword = this.accountUtils.crypto.encrypt(password);
@@ -22,8 +31,11 @@ export class AccountService {
         hashPassword
       );
       return result;
-    } catch (e: unknown) {
-      console.error(e);
+    } catch (error: unknown) {
+      logger.log({
+        level: 'error',
+        message: (error as Error).message,
+      });
       throw new Error(errorAccountNotFound.code);
     }
   }

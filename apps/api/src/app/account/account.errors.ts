@@ -6,4 +6,10 @@ export const errorAccountNotFound: ErrorApp = {
   message: 'account not found',
 };
 
+export const errorCreateAccount: ErrorApp = {
+  code: 'ERROR_CREATE_ACCOUNT',
+  httpCode: 500,
+  message: 'failed to create account',
+};
+
 export const accountErrorList: ErrorApp[] = [errorAccountNotFound];
