@@ -1,39 +1,38 @@
 import { DataSource } from 'typeorm';
 import { config } from '../../environments/config';
+import { AccountEntity } from './account.entity';
 
 const supportedDatabase = ['sqlite3', 'postgres', 'mysql', 'mariadb'];
 
-const findDatabaseType = (type: string): DataSource => {
+export const findDatabaseType = (type: string): DataSource => {
+  const entities = [AccountEntity];
+  const opt = {
+    ...config.database,
+    entities,
+    logging: true,
+  };
   switch (type) {
     case supportedDatabase[0]:
       return new DataSource({
-        ...config.dabatase,
+        ...opt,
         type: 'better-sqlite3',
-        logging: false,
       });
     case supportedDatabase[1]:
       return new DataSource({
-        ...config.dabatase,
+        ...opt,
         type: 'postgres',
-        logging: false,
       });
     case supportedDatabase[2]:
       return new DataSource({
-        ...config.dabatase,
+        ...opt,
         type: 'mysql',
-        logging: false,
       });
     case supportedDatabase[3]:
       return new DataSource({
-        ...config.dabatase,
+        ...opt,
         type: 'mariadb',
-        logging: false,
       });
     default:
       throw new Error('database is not supported');
   }
 };
-
-export const accountDatasource: DataSource = findDatabaseType(
-  config.dabatase.type
-);

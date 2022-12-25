@@ -15,26 +15,47 @@ export const accountController = (
   app: Express,
   accountService: AccountService
 ) => {
+  const getError = (error: any) => {
+    if (error.name && error.name === 'ValidationError') {
+      const errorResponse: Response<ErrorApp> = {
+        data: {
+          code: "VALIDATION_ERROR",
+          httpCode: 400,
+          message: error.message,
+          payload: error.errors
+        },
+      };
+      return errorResponse
+    } else {
+      const errorApp = findError(error, accountErrorList);
+      const errorResponse: Response<ErrorApp> = {
+        data: errorApp,
+      };
+      return errorResponse
+    }
+  }
   app.post('/api/signup', async (req, res) => {
     try {
-      const request = await signupDtoValidator.validateAsync(req.body);
-      const result = await accountService.signup(request);
+      const request = await signupDtoValidator.validate(req.body);
+      const result = await accountService.signup({
+        ...request,
+        scopes: "",
+        status: undefined,
+        type: undefined
+      });
       const response: Response<AccountDto> = {
         data: accountModelToAccountDto(result),
       };
       res.send(response);
     } catch (error) {
-      const errorApp = findError(error, accountErrorList);
-      const errorResponse: Response<ErrorApp> = {
-        data: errorApp,
-      };
-      res.status(200).status(errorApp.httpCode).send(errorResponse);
+      const err = getError(error)
+      res.status(err.data.httpCode).send(err);
     }
   });
   app.post('/api/signin', async (req, res) => {
     try {
-      const request = await signinDtoValidator.validateAsync(req.body);
-      const result = await accountService.signin(
+      const request = await signinDtoValidator.validate(req.body);
+      const result = await accountService.signing(
         request.email,
         request.password
       );
@@ -45,11 +66,8 @@ export const accountController = (
       };
       res.status(200).send(response);
     } catch (error) {
-      const errorApp = findError(error, accountErrorList);
-      const errorResponse: Response<ErrorApp> = {
-        data: errorApp,
-      };
-      res.status(200).status(errorApp.httpCode).send(errorResponse);
+      const err = getError(error)
+      res.status(err.data.httpCode).send(err);
     }
   });
 };

@@ -1,4 +1,4 @@
-import { AccountModel } from '@newgate/model';
+import {AccountModel, AccountType} from '@newgate/model';
 
 export interface AccountRepository {
   getAccountByEmailAndPassword(
@@ -6,4 +6,5 @@ export interface AccountRepository {
     password: string
   ): Promise<AccountModel>;
   createAccount(account: AccountModel): Promise<AccountModel>;
+  getAccountsByRole(accountType: AccountType): Promise<AccountModel[]>;
 }

@@ -1,4 +1,4 @@
-import Joi = require('joi');
+import * as Yup from 'yup'
 
 export type SignupDto = {
   email: string;
@@ -6,8 +6,8 @@ export type SignupDto = {
   password: string;
 };
 
-export const signupDtoValidator = Joi.object({
-  email: Joi.string().email().required(),
-  fullName: Joi.string().required(),
-  password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{8,30}$')).required(),
+export const signupDtoValidator = Yup.object({
+  email: Yup.string().email().required(),
+  fullName: Yup.string().required(),
+  password: Yup.string().matches(new RegExp('^[a-zA-Z0-9]{8,30}$')).required(),
 });

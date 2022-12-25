@@ -1,4 +1,4 @@
-import Joi = require('joi');
+import * as Yup from 'yup';
 import { AccountModel } from '@newgate/model';
 
 export type AccountDto = {
@@ -8,19 +8,19 @@ export type AccountDto = {
   type: 'ADMIN' | 'DEVELOPER';
   status: 'ACTIVE' | 'INACTIVE';
   scopes: string;
-  createdAt: Date;
+  createdAt?: Date;
   updatedAt?: Date;
 };
 
-export const accountDtoValidator = Joi.object({
-  id: Joi.string().uuid(),
-  email: Joi.string().email().required(),
-  fullName: Joi.string().required(),
-  type: Joi.string().allow(['ADMIN', 'DEVELOPER']).required(),
-  status: Joi.string().allow(['ACTIVE', 'INACTIVE']),
-  scopes: Joi.string(),
-  createdAt: Joi.date().required(),
-  updatedAt: Joi.date(),
+export const accountDtoValidator = Yup.object({
+  id: Yup.string().uuid(),
+  email: Yup.string().email("email format was wrong").required("email is required"),
+  fullName: Yup.string().required(),
+  type: Yup.string().oneOf(['ADMIN', 'DEVELOPER'], "type value is either ADMIN, DEVELOPER").required("type is required"),
+  status: Yup.string().oneOf(['ACTIVE', 'INACTIVE'], "status value is either ACTIVE, INACTIVE"),
+  scopes: Yup.string(),
+  createdAt: Yup.date(),
+  updatedAt: Yup.date(),
 });
 
 export const accountModelToAccountDto = (data: AccountModel): AccountDto => {

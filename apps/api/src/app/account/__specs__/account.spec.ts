@@ -114,7 +114,7 @@ describe('ACCOUNT APPLICATION', () => {
         updatedAt: undefined,
       };
       await accountService.createAccount(mockAccount);
-      const result = await accountService.preSignin(
+      const result = await accountService.preSigning(
         'test1@test.id',
         'changeme'
       );
@@ -137,7 +137,7 @@ describe('ACCOUNT APPLICATION', () => {
         updatedAt: undefined,
       };
       await accountService.createAccount(mockAccount);
-      const result = await accountService.preSignin('test1@test.id', 'rahasia');
+      const result = await accountService.preSigning('test1@test.id', 'rahasia');
 
       expect(result.id).toBeDefined();
       expect(result.email).toBe(mockAccount.email);
@@ -159,7 +159,7 @@ describe('ACCOUNT APPLICATION', () => {
       await accountService.createAccount(mockAccount);
 
       try {
-        await accountService.preSignin('test1@test.id', 'changeme');
+        await accountService.preSigning('test1@test.id', 'changeme');
       } catch (e: unknown) {
         expect((e as Error).message).toBe(errorAccountNotFound.code);
       }
@@ -182,7 +182,7 @@ describe('ACCOUNT APPLICATION', () => {
         updatedAt: undefined,
       };
       await accountService.createAccount(mockAccount);
-      const result = await accountService.signin('test1@test.id', 'changeme');
+      const result = await accountService.signing('test1@test.id', 'changeme');
 
       expect(accountUtils.verifyJwt(result)).toBeTruthy();
     });

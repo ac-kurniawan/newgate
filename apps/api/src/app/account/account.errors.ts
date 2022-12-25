@@ -12,4 +12,10 @@ export const errorCreateAccount: ErrorApp = {
   message: 'failed to create account',
 };
 
-export const accountErrorList: ErrorApp[] = [errorAccountNotFound];
+export const errorSigning: ErrorApp = {
+  code: 'ERROR_SIGNING',
+  httpCode: 500,
+  message: 'failed to sign in',
+};
+
+export const accountErrorList: ErrorApp[] = [errorAccountNotFound, errorCreateAccount, errorSigning];

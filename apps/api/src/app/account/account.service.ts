@@ -1,10 +1,12 @@
-import { AccountModel } from '@newgate/model';
-import { logger } from '@newgate/logger';
-import { errorAccountNotFound, errorCreateAccount } from './account.errors';
-import { AccountRepository } from './account.repository';
-import { AccountUtils } from './account.utils';
-import { AccountRepositorySQLImpl } from './impl/account.repository.sql.impl';
-import { accountDatasource } from './account.datasource';
+import {AccountModel} from '@newgate/model';
+import {logger} from '@newgate/logger';
+import {errorAccountNotFound, errorCreateAccount} from './account.errors';
+import {AccountRepository} from './account.repository';
+import {AccountUtils} from './account.utils';
+import {AccountRepositorySQLImpl} from './impl/account.repository.sql.impl';
+import { findDatabaseType } from './account.datasource';
+import {config} from "../../environments/config";
+import {defaultAdminScopes, defaultDeveloperScopes} from "./account.constant";
 
 export class AccountService {
   constructor(
@@ -13,10 +15,24 @@ export class AccountService {
   ) {}
   async createAccount(account: AccountModel): Promise<AccountModel> {
     const password = account.password || 'changeme';
+    const accountByRoles = await this.accountRepository.getAccountsByRole('ADMIN').catch(e => {
+      throw new Error(errorCreateAccount.code);
+    })
+
     account.password = this.accountUtils.crypto.encrypt(password);
+    account.type = accountByRoles.length === 0 ? 'ADMIN' : 'DEVELOPER'
+
+    switch (account.type) {
+      case "ADMIN":
+        account.scopes = defaultAdminScopes
+        break;
+      case "DEVELOPER":
+        account.scopes = defaultDeveloperScopes
+        break
+    }
+
     try {
-      const result = await this.accountRepository.createAccount(account);
-      return result;
+      return await this.accountRepository.createAccount(account);
     } catch (error: unknown) {
       logger.log({
         level: 'error',
@@ -25,14 +41,13 @@ export class AccountService {
       throw new Error(errorCreateAccount.code);
     }
   }
-  async preSignin(email: string, password: string): Promise<AccountModel> {
+  async preSigning(email: string, password: string): Promise<AccountModel> {
     const hashPassword = this.accountUtils.crypto.encrypt(password);
     try {
-      const result = await this.accountRepository.getAccountByEmailAndPassword(
+      return await this.accountRepository.getAccountByEmailAndPassword(
         email,
         hashPassword
       );
-      return result;
     } catch (error: unknown) {
       logger.log({
         level: 'error',
@@ -41,16 +56,23 @@ export class AccountService {
       throw new Error(errorAccountNotFound.code);
     }
   }
-  async signin(email: string, password: string): Promise<string> {
-    const result = await this.preSignin(email, password);
-    return this.accountUtils.generateJwt(result.id);
+  async signing(email: string, password: string): Promise<string> {
+    const result = await this.preSigning(email, password);
+    return this.accountUtils.generateJwt(result.id, result.email, result.fullName, result.scopes);
   }
   async signup(account: AccountModel): Promise<AccountModel> {
+    account.status = 'ACTIVE'
     return await this.createAccount(account);
   }
 }
 
-export const accountService = () => {
-  const accountRepository = new AccountRepositorySQLImpl(accountDatasource);
+export const accountService = async () => {
+  const datasource = findDatabaseType(
+    config.database.type
+  )
+  await datasource
+    .initialize()
+    .catch((e) => console.error('Error initialize', e));
+  const accountRepository = new AccountRepositorySQLImpl(datasource);
   return new AccountService(accountRepository, new AccountUtils());
 };

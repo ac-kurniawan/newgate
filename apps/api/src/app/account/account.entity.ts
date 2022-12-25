@@ -8,34 +8,34 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity({name: "accounts", schema: "public"})
 export class AccountEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
-  @Column()
+  @Column({ name: 'email' })
   @Index({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ name: 'full_name' })
   fullName: string;
 
-  @Column()
+  @Column({ name: 'password', type: 'varchar' })
   password?: string;
 
-  @Column()
+  @Column({ name: 'type', type: 'varchar' })
   type: AccountType;
 
-  @Column()
+  @Column({ name: 'status', type: 'varchar' })
   status: AccountStatus;
 
-  @Column()
+  @Column({ name: 'scopes' })
   scopes: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }
 

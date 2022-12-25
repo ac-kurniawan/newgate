@@ -6,19 +6,13 @@ export const config = {
     host: process.env.SERVER_HOST || 'localhost',
     port: Number(process.env.SERVER_PORT) || 3000,
   },
-  dabatase: {
-    type: process.env.DB_HOST || 'better-sqlite3',
+  database: {
+    type: process.env.DB_DIALECT || 'better-sqlite3',
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME || ':memory:',
-    synchronize:
-      process.env.DB_SYNCHRONIZE == 'true'
-        ? true
-        : process.env.DB_SYNCHRONIZE == 'false'
-        ? false
-        : true,
+    database: process.env.DB_NAME || ':memory:'
   },
   credentials: {
     secretToken: process.env.SECRET_TOKEN || 'secret',

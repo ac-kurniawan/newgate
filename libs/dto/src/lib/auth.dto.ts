@@ -1,9 +1,9 @@
-import Joi = require('joi');
+import * as Yup from 'yup';
 
 export type AuthDto = {
   accessToken: string;
 };
 
-export const authDtoValidator = Joi.object({
-  accessToken: Joi.string().required(),
+export const authDtoValidator = Yup.object({
+  accessToken: Yup.string().required(),
 });
