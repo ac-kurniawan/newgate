@@ -1,3 +1,4 @@
+import { Claim } from '@newgate/model';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BaseState } from '../base.state';
 
@@ -5,10 +6,7 @@ export interface AuthState extends BaseState {
   data?: {
     isAuthenticated: boolean;
     accessToken: string;
-    parsedToken: {
-      sub: string;
-      exp: Date;
-    };
+    parsedToken: Claim;
   };
   updatedAt?: Date;
 }
@@ -24,17 +22,20 @@ export const AuthSlice = createSlice({
     pending: (state) => {
       return {
         ...state,
-        status: 'PENDING'
-      }
+        status: 'PENDING',
+      };
     },
-    failed: (state, action: PayloadAction<{message: string}>) => {
+    failed: (state, action: PayloadAction<{ message: string }>) => {
       return {
         ...state,
         status: 'FAILED',
-        message: action.payload.message
-      }
+        message: action.payload.message,
+      };
     },
-    signin: (state, action: PayloadAction<{email: string, password: string}>) => {
+    signin: (
+      state,
+      action: PayloadAction<{ email: string; password: string }>
+    ) => {
       return {
         ...state,
       };
@@ -43,6 +44,8 @@ export const AuthSlice = createSlice({
       return {
         ...state,
         ...action,
+        status: 'SUCCESS',
+        message: undefined,
       };
     },
   },

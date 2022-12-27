@@ -1,5 +1,9 @@
 import { IconType } from 'react-icons';
-import { createBrowserRouter, RouteObject } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouteObject,
+  RouterProvider,
+} from 'react-router-dom';
 import { HomePage } from '../page/Home';
 import { SigninPage } from '../page/Signin';
 import { SignupPage } from '../page/Signup';
@@ -8,6 +12,8 @@ import { adminRouteIds, AdminRoutes } from './admin.router';
 import { KongRouteIds, KongRoutes } from './kong.router';
 import { userRouteIds, UserRoutes } from './user.router';
 import { Text } from '@chakra-ui/react';
+import { FC } from 'react';
+import { useAppSelector } from '../state';
 
 export type CustomRouter = RouteObject & {
   name: string;
@@ -71,5 +77,15 @@ export const RouterList: CustomRouter[] = [
 export const getRouter = (isAuthenticated: boolean) => {
   return createBrowserRouter(
     RouterList.filter((x) => x.isProtected === isAuthenticated)
+  );
+};
+
+export const AppRoutes: FC = () => {
+  const auth = useAppSelector((state) => state.auth);
+  return (
+    <RouterProvider
+      router={getRouter(auth.data?.isAuthenticated || false)}
+      fallbackElement={<Text>404 Error Not Found</Text>}
+    />
   );
 };

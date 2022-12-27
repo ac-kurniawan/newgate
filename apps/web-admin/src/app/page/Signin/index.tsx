@@ -12,42 +12,49 @@ import {
   Box,
   Text,
   HStack,
-  Divider, FormErrorMessage,
+  Divider,
+  FormErrorMessage,
 } from '@chakra-ui/react';
-import {FC, useEffect, useState} from 'react';
+import { FC, useEffect, useState } from 'react';
 import { HeaderOnlyLayout } from '../../layout/HeaderOnlyLayout';
-import {useAppDispatch, useAppSelector} from "../../state";
-import {AuthSlice} from "../../state/auth/auth.state";
-import {useFormik} from "formik";
-import {signinDtoValidator} from "@newgate/dto";
+import { useAppDispatch, useAppSelector } from '../../state';
+import { AuthSlice } from '../../state/auth/auth.state';
+import { useFormik } from 'formik';
+import { signinDtoValidator } from '@newgate/dto';
 
 export const SigninPage: FC = () => {
-  const dispatch = useAppDispatch()
-  const auth = useAppSelector(state => state.auth)
-  const [isLoadingSignIn, setIsLoadingSignIn] = useState(false)
+  const dispatch = useAppDispatch();
+  const auth = useAppSelector((state) => state.auth);
+  const [isLoadingSignIn, setIsLoadingSignIn] = useState(false);
 
   useEffect(() => {
     if (auth.status === 'PENDING') {
-      setIsLoadingSignIn(true)
+      setIsLoadingSignIn(true);
     } else {
-      setIsLoadingSignIn(false)
-
+      setIsLoadingSignIn(false);
     }
-  }, [auth.status])
+  }, [auth.status]);
 
   const signInForm = useFormik({
     initialValues: {
-      email: "",
-      password: ""
+      email: '',
+      password: '',
     },
     validationSchema: signinDtoValidator,
+    validateOnChange: false,
+    validateOnBlur: false,
     onSubmit: (val) => {
-      dispatch(AuthSlice.actions.signin({
-        email: val.email,
-        password: val.password
-      }))
-    }
-  })
+      dispatch(
+        AuthSlice.actions.signin({
+          email: val.email,
+          password: val.password,
+        })
+      );
+    },
+  });
+
+  const flexColor = useColorModeValue('gray.50', 'gray.800');
+  const boxColor = useColorModeValue('white', 'gray.700');
 
   return (
     <HeaderOnlyLayout>
@@ -55,7 +62,7 @@ export const SigninPage: FC = () => {
         minH={'calc(100vh - 168px)'}
         align={'center'}
         justify={'center'}
-        bg={useColorModeValue('gray.50', 'gray.800')}
+        bg={flexColor}
       >
         <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
           <Stack align={'center'}>
@@ -65,24 +72,38 @@ export const SigninPage: FC = () => {
               ✌️
             </Text>
           </Stack>
-          <Box
-            rounded={'lg'}
-            bg={useColorModeValue('white', 'gray.700')}
-            boxShadow={'lg'}
-            p={8}
-          >
+          <Box rounded={'lg'} bg={boxColor} boxShadow={'lg'} p={8} minW={'md'}>
             <Stack spacing={4}>
-              <FormControl>
+              <FormControl isInvalid={!signInForm.isValid}>
                 <FormLabel>Email address</FormLabel>
-                <Input type="email" id="email" name="email" onChange={signInForm.handleChange} value={signInForm.values.email}/>
+                <Input
+                  type="email"
+                  id="email"
+                  name="email"
+                  onChange={signInForm.handleChange}
+                  value={signInForm.values.email}
+                />
                 <FormErrorMessage>{signInForm.errors.email}</FormErrorMessage>
               </FormControl>
-              <FormControl>
+              <FormControl isInvalid={!signInForm.isValid}>
                 <FormLabel>Password</FormLabel>
-                <Input type="password" id="password" name="password" onChange={signInForm.handleChange} value={signInForm.values.password}/>
-                <FormErrorMessage>{signInForm.errors.password}</FormErrorMessage>
+                <Input
+                  type="password"
+                  id="password"
+                  name="password"
+                  onChange={signInForm.handleChange}
+                  value={signInForm.values.password}
+                />
+                <FormErrorMessage>
+                  {signInForm.errors.password}
+                </FormErrorMessage>
               </FormControl>
-              <Text color={'red'} display={auth.status === 'FAILED' ? 'block' : 'none'} >email or password was wrong</Text>
+              <Text
+                color={'red'}
+                display={auth.status === 'FAILED' ? 'block' : 'none'}
+              >
+                email or password was wrong
+              </Text>
               <Stack spacing={5}>
                 <Stack
                   direction={{ base: 'column', sm: 'row' }}
