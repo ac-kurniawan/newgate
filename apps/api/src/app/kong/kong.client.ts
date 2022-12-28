@@ -12,6 +12,10 @@ export const kongClient = async <T>(
     },
     body: JSON.stringify(data),
   });
+  if (result.status > 299) {
+    const res: any = await result.json();
+    throw Error(res.message);
+  }
   return await result.json();
 };
 
@@ -22,6 +26,10 @@ export const kongAdminClient = (baseUrl: string) => ({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
+    if (result.status > 299) {
+      const res: any = await result.json();
+      throw Error(res.message);
+    }
     return await result.json();
   },
   createRoute: async (serviceName: string, body: { paths: string[] }) => {
@@ -30,6 +38,10 @@ export const kongAdminClient = (baseUrl: string) => ({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
+    if (result.status > 299) {
+      const res: any = await result.json();
+      throw Error(res.message);
+    }
     return await result.json();
   },
   addKeyauthPlugins: async (serviceName: string, body: { name: string }) => {
@@ -38,6 +50,10 @@ export const kongAdminClient = (baseUrl: string) => ({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
+    if (result.status > 299) {
+      const res: any = await result.json();
+      throw Error(res.message);
+    }
     return await result.json();
   },
   createConsumer: async (body: { username: string; custom_id: string }) => {
@@ -46,6 +62,10 @@ export const kongAdminClient = (baseUrl: string) => ({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
+    if (result.status > 299) {
+      const res: any = await result.json();
+      throw Error(res.message);
+    }
     return await result.json();
   },
   registerPluginToConsumer: async (consumerId: string) => {
@@ -53,6 +73,10 @@ export const kongAdminClient = (baseUrl: string) => ({
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
     });
+    if (result.status > 299) {
+      const res: any = await result.json();
+      throw Error(res.message);
+    }
     return await result.json();
   },
 });

@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({name: "accounts", schema: "public"})
+@Entity({ name: 'accounts', schema: 'public' })
 export class AccountEntity {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
@@ -36,7 +36,7 @@ export class AccountEntity {
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt?: Date;
 }
 
 export const accountEntityConverter = {
@@ -51,6 +51,19 @@ export const accountEntityConverter = {
       scopes: entity.scopes,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
+    };
+  },
+  fromModel: (model: AccountModel): AccountEntity => {
+    return {
+      id: model.id,
+      email: model.email,
+      password: model.password,
+      fullName: model.fullName,
+      type: model.type,
+      status: model.status,
+      scopes: model.scopes,
+      createdAt: model.createdAt,
+      updatedAt: model.updatedAt,
     };
   },
 };

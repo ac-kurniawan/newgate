@@ -1,6 +1,7 @@
 import { KongModel } from '@newgate/model';
 import { randomUUID } from 'crypto';
 import { kongAdminClient, kongClient } from './kong.client';
+import { errorKeyIsMandatory } from './kong.errors';
 import { KongRepository } from './kong.repository';
 
 export class KongService {
@@ -20,6 +21,14 @@ export class KongService {
   }
 
   async createKongConnection(kongModel: KongModel): Promise<KongModel> {
+    if (!kongModel.key) {
+      throw new Error(errorKeyIsMandatory.code);
+    }
+    const result = await this.kongRepository.create(kongModel);
+    return result;
+  }
+
+  async quickCreateKongConnection(kongModel: KongModel): Promise<KongModel> {
     const kongAdmin = kongAdminClient(kongModel.baseUrl);
     await kongAdmin.createService({
       name: kongModel.name,
@@ -44,5 +53,16 @@ export class KongService {
     const result = await this.kongRepository.create(kongModel);
 
     return result;
+  }
+
+  async createNewKong(
+    kongModel: KongModel,
+    isQuickSetup?: boolean
+  ): Promise<KongModel> {
+    if (isQuickSetup) {
+      return await this.quickCreateKongConnection(kongModel);
+    } else {
+      return await this.createKongConnection(kongModel);
+    }
   }
 }

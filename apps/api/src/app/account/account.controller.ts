@@ -7,48 +7,29 @@ import {
   signinDtoValidator,
   signupDtoValidator,
 } from '@newgate/dto';
-import { ErrorApp, Response } from '@newgate/model';
-import { findError } from '@newgate/error-apps';
+import { Response } from '@newgate/model';
+import { handleResponseError } from '@newgate/error-apps';
 import { accountErrorList } from './account.errors';
 
 export const accountController = (
   app: Express,
   accountService: AccountService
 ) => {
-  const getError = (error: any) => {
-    if (error.name && error.name === 'ValidationError') {
-      const errorResponse: Response<ErrorApp> = {
-        data: {
-          code: "VALIDATION_ERROR",
-          httpCode: 400,
-          message: error.message,
-          payload: error.errors
-        },
-      };
-      return errorResponse
-    } else {
-      const errorApp = findError(error, accountErrorList);
-      const errorResponse: Response<ErrorApp> = {
-        data: errorApp,
-      };
-      return errorResponse
-    }
-  }
   app.post('/api/signup', async (req, res) => {
     try {
       const request = await signupDtoValidator.validate(req.body);
       const result = await accountService.signup({
         ...request,
-        scopes: "",
+        scopes: '',
         status: undefined,
-        type: undefined
+        type: undefined,
       });
       const response: Response<AccountDto> = {
         data: accountModelToAccountDto(result),
       };
       res.send(response);
     } catch (error) {
-      const err = getError(error)
+      const err = handleResponseError(error, accountErrorList);
       res.status(err.data.httpCode).send(err);
     }
   });
@@ -66,7 +47,7 @@ export const accountController = (
       };
       res.status(200).send(response);
     } catch (error) {
-      const err = getError(error)
+      const err = handleResponseError(error, accountErrorList);
       res.status(err.data.httpCode).send(err);
     }
   });

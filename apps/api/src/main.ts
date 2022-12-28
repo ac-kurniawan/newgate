@@ -9,6 +9,7 @@ import * as path from 'path';
 import { config } from './environments/config';
 import bodyParser = require('body-parser');
 import { accountApplication } from './app/account/account.application';
+import AppDataSource from './data-source';
 
 const app = express();
 
@@ -16,7 +17,11 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.use(bodyParser.json());
 
-accountApplication(app);
+AppDataSource.initialize()
+  .then((datasource) => {
+    accountApplication(app, datasource);
+  })
+  .catch((e) => console.error('Error initialize datasource', e));
 
 app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to api!' });
