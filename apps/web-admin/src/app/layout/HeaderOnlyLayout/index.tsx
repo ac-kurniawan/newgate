@@ -8,18 +8,23 @@ import {
 } from '@chakra-ui/react';
 import { FC, PropsWithChildren } from 'react';
 import { Navbar } from '../../component/Navbar';
-import {useAppSelector} from "../../state";
+import { useAppSelector } from '../../state';
 
 export const HeaderOnlyLayout: FC<PropsWithChildren> = (props) => {
   const { onOpen } = useDisclosure();
-  const auth = useAppSelector(state => state.auth)
+  const auth = useAppSelector((state) => state.auth);
 
   return (
     <Box bg={useColorModeValue('gray.50', 'gray.800')}>
       <Navbar
         onOpen={onOpen}
         isShowLogo={true}
-        avatarMenu={auth.data && { name: 'Ardhi Catur K', access: 'admin' }}
+        avatarMenu={
+          auth.data && {
+            name: auth.data.parsedToken.fullName,
+            access: auth.data.parsedToken.email,
+          }
+        }
       />
       <Box p={4}>{props.children}</Box>
       <Box bg={'white'} color={useColorModeValue('gray.700', 'gray.200')}>

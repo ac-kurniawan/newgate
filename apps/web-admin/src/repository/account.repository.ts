@@ -1,5 +1,5 @@
 import { AccountDto, AuthDto, SignupDto } from '@newgate/dto';
-import { DatasourceOption } from '../datasource/datasource.options';
+import { DatasourceOption } from '../datasource/options.datasource';
 
 export type RepositoryOptions = DatasourceOption & {
   token: string;
@@ -12,4 +12,7 @@ export interface AccountRepository {
     opts?: RepositoryOptions
   ): Promise<AuthDto>;
   signup(signupModel: SignupDto, opts?: RepositoryOptions): Promise<AccountDto>;
+  getSession(opts?: RepositoryOptions): Promise<AuthDto>;
+  saveSession(authDto: AuthDto, opts?: RepositoryOptions): Promise<void>;
+  clearSession(): Promise<void>;
 }

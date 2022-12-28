@@ -1,6 +1,7 @@
 import { IconType } from 'react-icons';
 import {
   createBrowserRouter,
+  Navigate,
   RouteObject,
   RouterProvider,
 } from 'react-router-dom';
@@ -12,8 +13,9 @@ import { adminRouteIds, AdminRoutes } from './admin.router';
 import { KongRouteIds, KongRoutes } from './kong.router';
 import { userRouteIds, UserRoutes } from './user.router';
 import { Text } from '@chakra-ui/react';
-import { FC } from 'react';
-import { useAppSelector } from '../state';
+import { FC, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../state';
+import { AuthSlice } from '../state/auth/auth.state';
 
 export type CustomRouter = RouteObject & {
   name: string;
@@ -26,6 +28,7 @@ export type CustomRouter = RouteObject & {
 
 export const RootRouterIds = {
   signin: 'signin',
+  redirectSignin: 'redirectSignin',
   signup: 'signup',
   unauthenticatedHome: 'unauthenticatedHome',
   authenticatedHome: 'authenticatedHome',
@@ -41,6 +44,14 @@ export const RouterList: CustomRouter[] = [
     path: '/signin',
     element: <SigninPage />,
     isProtected: false,
+    group: 'auth',
+  },
+  {
+    id: RootRouterIds.redirectSignin,
+    name: 'RedirectSignin',
+    path: '/signin',
+    element: <Navigate to={'/'} />,
+    isProtected: true,
     group: 'auth',
   },
   {
@@ -82,9 +93,14 @@ export const getRouter = (isAuthenticated: boolean) => {
 
 export const AppRoutes: FC = () => {
   const auth = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(AuthSlice.actions.sync());
+  }, [dispatch]);
+
   return (
     <RouterProvider
-      router={getRouter(auth.data?.isAuthenticated || false)}
+      router={getRouter(auth.data ? auth.data.isAuthenticated : false)}
       fallbackElement={<Text>404 Error Not Found</Text>}
     />
   );

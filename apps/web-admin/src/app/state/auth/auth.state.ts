@@ -32,6 +32,11 @@ export const AuthSlice = createSlice({
         message: action.payload.message,
       };
     },
+    sync: (state) => {
+      return {
+        ...state,
+      };
+    },
     signin: (
       state,
       action: PayloadAction<{ email: string; password: string }>
@@ -43,7 +48,7 @@ export const AuthSlice = createSlice({
     signedin: (state, action: PayloadAction<AuthState>) => {
       return {
         ...state,
-        ...action,
+        ...action.payload,
         status: 'SUCCESS',
         message: undefined,
       };

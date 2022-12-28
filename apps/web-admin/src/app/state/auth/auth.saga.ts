@@ -25,6 +25,34 @@ export function* signinSaga(
           accessToken: result.accessToken,
         },
         updatedAt: new Date(),
+        message: undefined,
+      })
+    );
+  } catch (e: unknown) {
+    yield put(
+      AuthSlice.actions.failed({
+        message: (e as Error).message,
+      })
+    );
+  }
+}
+
+export function* syncSaga() {
+  yield put(AuthSlice.actions.pending());
+  const accountService: AccountService = yield getContext('accountService');
+  try {
+    const result: AuthDto = yield call(() => accountService.getSession());
+    const parsedToken: Claim = JWT(result.accessToken);
+    yield put(
+      AuthSlice.actions.signedin({
+        status: 'SUCCESS',
+        data: {
+          parsedToken,
+          isAuthenticated: true,
+          accessToken: result.accessToken,
+        },
+        message: undefined,
+        updatedAt: new Date(),
       })
     );
   } catch (e: unknown) {

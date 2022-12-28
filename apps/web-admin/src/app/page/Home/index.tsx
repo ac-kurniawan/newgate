@@ -82,20 +82,7 @@ export const HomePage: FC = () => {
       <Grid
         templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
         gap={6}
-      >
-        <ProductSimple />
-        <ProductSimple />
-        <ProductSimple />
-        <ProductSimple />
-        <ProductSimple />
-        <ProductSimple />
-        <ProductSimple />
-        <ProductSimple />
-        <ProductSimple />
-        <ProductSimple />
-        <ProductSimple />
-        <ProductSimple />
-      </Grid>
+      ></Grid>
       <Button
         colorScheme={'teal'}
         leftIcon={<IoAddCircle />}
