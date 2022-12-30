@@ -51,6 +51,6 @@ export const quickCreateKongDtoValdiator = Yup.object({
 export type CreateKongQueryParams = {
   isQuickSetup?: boolean;
 };
-export const createKongQueryParamsValidator = {
+export const createKongQueryParamsValidator = Yup.object({
   isQuickSetup: Yup.boolean().default(false),
-};
+});
