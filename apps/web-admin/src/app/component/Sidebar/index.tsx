@@ -14,7 +14,7 @@ import {
   Divider,
 } from '@chakra-ui/react';
 import { IconType } from 'react-icons';
-import KongLogo from '../../../assets/kong-logo.png';
+import KongLogo from '../../../assets/kong-logomark-color.svg';
 import { ImageMenu } from '../ImageMenu';
 import { Navbar } from '../Navbar';
 import { CustomRouter, RouterList } from '../../routes';

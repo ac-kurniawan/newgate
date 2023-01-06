@@ -1,8 +1,8 @@
 export type Claim = {
   email: string;
-  exp: Date;
+  exp: number;
   fullName: string;
-  iat: Date;
+  iat: number;
   iss: string;
   scopes: string;
   sub: string;
