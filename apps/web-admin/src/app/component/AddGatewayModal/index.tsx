@@ -1,30 +1,34 @@
 import {
+  Button,
   Grid,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   ModalOverlay,
   ModalProps,
-  Box,
 } from '@chakra-ui/react';
 import { FC } from 'react';
-import { HomeItemCard } from '../HomeItemCard';
-import KongLogo from '../../../assets/kong-logomark-color.svg';
-import KrakendLogo from '../../../assets/krakend-api-gateway.webp';
-import TykLogo from '../../../assets/tyk-logo.svg';
+import {
+  AddGatewayItemCard,
+  AddGatewayItemCardProps,
+} from '../AddGatewayItemCard';
 
 export interface AddGatewayModalProps extends Omit<ModalProps, 'children'> {
   title: string;
+  gatewayList: AddGatewayItemCardProps[];
+  onSelectGatewayItem: (id: number) => void;
 }
 
 export const AddGatewayModal: FC<AddGatewayModalProps> = (props) => {
-  const { title, ...rest } = props;
+  const { title, gatewayList, onSelectGatewayItem, ...rest } = props;
+
   return (
     <Modal {...rest} size={'6xl'}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent p={3}>
         <ModalHeader>{title}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
@@ -32,28 +36,23 @@ export const AddGatewayModal: FC<AddGatewayModalProps> = (props) => {
             templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
             gap={3}
           >
-            <Box border={'5px solid teal'}>
-              <HomeItemCard
-                imageUrl={KongLogo}
-                name={'Kong'}
-                type={'API Gateway'}
-                url={''}
+            {gatewayList.map((gateway, idx) => (
+              <AddGatewayItemCard
+                key={idx}
+                id={idx}
+                imageUrl={gateway.imageUrl}
+                name={gateway.name}
+                type={gateway.type}
+                url={gateway.url}
+                selected={gateway.selected}
+                onClick={onSelectGatewayItem}
               />
-            </Box>
-            <HomeItemCard
-              imageUrl={KrakendLogo}
-              name={'Krakend'}
-              type={'API Gateway'}
-              url={''}
-            />
-            <HomeItemCard
-              imageUrl={TykLogo}
-              name={'Tyk'}
-              type={'API Gateway'}
-              url={''}
-            />
+            ))}
           </Grid>
         </ModalBody>
+        <ModalFooter>
+          <Button colorScheme="blue">Next</Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );
