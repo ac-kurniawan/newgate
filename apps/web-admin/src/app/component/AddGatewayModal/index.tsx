@@ -15,6 +15,8 @@ import {
   AddGatewayItemCard,
   AddGatewayItemCardProps,
 } from '../AddGatewayItemCard';
+import { InProgressConfigurationForm } from './InProgressConfigurationForm';
+import { KongConfigurationForm } from './KongConfigurationForm';
 
 export interface AddGatewayModalProps extends Omit<ModalProps, 'children'> {
   title: string;
@@ -24,6 +26,20 @@ export interface AddGatewayModalProps extends Omit<ModalProps, 'children'> {
 
 export const AddGatewayModal: FC<AddGatewayModalProps> = (props) => {
   const { title, gatewayList, onSelectGatewayItem, ...rest } = props;
+
+  const configurationForms = [
+    <KongConfigurationForm />,
+    <InProgressConfigurationForm />,
+    <InProgressConfigurationForm />,
+  ];
+
+  const selectForm = () => {
+    const find = gatewayList.find((x) => x.selected === true);
+    if (!find) {
+      return <InProgressConfigurationForm />;
+    }
+    return configurationForms[find.id];
+  };
 
   return (
     <Modal {...rest} size={'6xl'}>
@@ -49,9 +65,11 @@ export const AddGatewayModal: FC<AddGatewayModalProps> = (props) => {
               />
             ))}
           </Grid>
+          {}
+          {selectForm()}
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue">Next</Button>
+          <Button colorScheme="blue">Submit</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
